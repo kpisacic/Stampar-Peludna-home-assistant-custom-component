@@ -4,10 +4,13 @@ Pollen alergy forecast ("Peludna prognoza") for Republic of Croatia, by Public H
 The `stampar_pelud` sensor platform provide pollen forecast data for Republic of Croatia. Data is provided by
 Public Health Institute "Andrija Štampar"  - https://stampar.hr/hr/peludna-prognoza .
 
+Component uses web scraping technique for obtaining the data from the public web pages.
+
+Sensor can be watched in Home Assistant with standard Entity and Entity Glance cards, or using custom build card for it https://github.com/kpisacic/lovelace-stampar-pelud-card .
+
 The following device types and data are supported:
 
 - [Sensor](#sensor) - Current conditions
-- [Custom Card](#custom-card) - Custom lovelace card with semaphore indicators
 
 ## Installation
 
@@ -30,6 +33,8 @@ Platform can determine location in any of following ways:
 - by reading home assistant's location, and then determining closest measurement stop
 
 So, minimum configuration is without any named configuration parameters other then platform name `stampar_pelud`.
+
+When selecting location, you need to observe type of data reported by the service - some locations only report level of pollen per plant types (trees, grass), other locations beside level report most significant pollen plant, while some give also exact numeric value of level. Output of the sensor will be adjusted depending on available data from measurement.
 
 ## Sensor
 
@@ -72,7 +77,7 @@ sensor:
 - allergens:
   - description: List of plants to monitor, and create as sensors in home assistant. Since there are many plants, you can limit your monitored list to only those which are of interest to you
   - required: false
-  - type: list of plant identifiers see list of [plants](#plants)
+  - type: list of plant identifiers see list of [plants](#plants) - e.g. [3,4,5,6]
 
 ## station_id
 

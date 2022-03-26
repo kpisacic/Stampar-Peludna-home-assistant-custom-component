@@ -1,5 +1,5 @@
 """Sensor for the Štamper Peludna Prognoza."""
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 import logging
 import voluptuous as vol
 import requests
@@ -13,7 +13,7 @@ from homeassistant.const import (
     __version__,
 )
 import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.util import Throttle
 
 _LOGGER = logging.getLogger(__name__)
@@ -149,7 +149,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     )
 
 
-class StamparPeludSensor(Entity):
+class StamparPeludSensor(SensorEntity):
     """Implementation of a Štampar Pelud sensor."""
 
     def __init__(self, probe, variable, name, station_id, station_name):
@@ -186,6 +186,11 @@ class StamparPeludSensor(Entity):
                     else:
                         ret = first_measurement["level"]
         return ret
+
+    @property
+    def state_class(self):
+        """Return the state_class of this entity, if any."""
+        return "measurement"
 
     @property
     def extra_state_attributes(self):
@@ -253,6 +258,8 @@ class StamparPeludData:
         try:
             # Return structure with received parsed data
             # title                 - station title as received from API
+            # min_date              - minimum date of measurements
+            # max_first_date        - maximum first measurement date
             # plants: {
             #   plant_key: {         - HR name  of plant, from API
             #     title             - name fo plant, from API
@@ -268,6 +275,8 @@ class StamparPeludData:
             # }
             elem = {
                 "title": "",
+                "min_date": None,
+                "max_first_date": None,
                 "plants": {},
             }
 
@@ -327,40 +336,46 @@ class StamparPeludData:
 
                 d_measurements = []
 
+                d_first_measurement = None
+
                 for measurement in plant.find_all("div", class_="mjerenje-container"):
                 
                     date_measurement = measurement.find("div", class_="field-field-datum-mjerenja").find("div", class_="field-item").get_text("", strip=True)
                     _LOGGER.debug("Found measurement of date: %s", date_measurement)
-                    level_measurement = ""
-                    s_level_measurement = measurement.find("div", class_="field-field-vrijednost-tekst")
-                    if s_level_measurement:
-                        level_measurement = s_level_measurement.find("div", class_="field-item").get_text("", strip=True)
-                    value_measurement = ""
-                    s_value = measurement.find("div", class_="field-field-vrijednost")
-                    if s_value:
-                        value_measurement = s_value.find("div", class_="field-item").get_text("", strip=True)
-
-                    _LOGGER.debug("Original level: %s and value: %s", level_measurement, value_measurement)
-
-                    if level_measurement == "" and value_measurement != "" and not value_measurement.replace(".","").isdigit():
-                        level_measurement = value_measurement
+                    d_date_measurement = datetime.strptime(date_measurement, '%d.%m.%Y.').date()
+                    if d_date_measurement < date.today():
+                        _LOGGER.debug("Found measurement date is in past, ignoring it: %s < %s", d_date_measurement , date.today())
+                    else:
+                        level_measurement = ""
+                        s_level_measurement = measurement.find("div", class_="field-field-vrijednost-tekst")
+                        if s_level_measurement:
+                            level_measurement = s_level_measurement.find("div", class_="field-item").get_text("", strip=True)
                         value_measurement = ""
+                        s_value = measurement.find("div", class_="field-field-vrijednost")
+                        if s_value:
+                            value_measurement = s_value.find("div", class_="field-item").get_text("", strip=True)
 
-                    _LOGGER.debug("Aligned level: %s and value: %s", level_measurement, value_measurement)
+                        _LOGGER.debug("Original level: %s and value: %s", level_measurement, value_measurement)
 
-                    # - replace levels with average values
-                    # if value_measurement == "" and level_measurement != "":
-                    #     for i in LEVELS:
-                    #         if LEVELS[i]["title"] == level_measurement:
-                    #             value_measurement = LEVELS[i]["medium"]
+                        if level_measurement == "" and value_measurement != "" and not value_measurement.replace(".","").isdigit():
+                            level_measurement = value_measurement
+                            value_measurement = ""
 
-                    # _LOGGER.debug("Final level: %s and value: %s", level_measurement, value_measurement)
+                        _LOGGER.debug("Aligned level: %s and value: %s", level_measurement, value_measurement)
 
-                    d_measurements.append( {
-                        "date": date_measurement,
-                        "level": level_measurement,
-                        "value": value_measurement
-                    } )
+                        d_measurements.append( {
+                            "date": date_measurement,
+                            "level": level_measurement,
+                            "value": value_measurement
+                        } )
+                    
+                    if not d_first_measurement:
+                        d_first_measurement = d_date_measurement
+                        if not elem["max_first_date"] or d_first_measurement > elem["max_first_date"]:
+                            elem["max_first_date"] = d_first_measurement
+
+                    if not elem["min_date"] or d_date_measurement < elem["min_date"]:
+                        elem["min_date"] = d_date_measurement
 
                 elem["plants"][plant_key] = {
                     "title": plant_title,
@@ -409,8 +424,13 @@ class StamparPeludData:
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         """Get the latest data from Štampar Peludna."""
+
         if self._last_update and ( self._last_update + timedelta(hours=1) > datetime.now() ):
             _LOGGER.debug("Skipping sensor data update, last_update was: %s", self._last_update)
+            return
+
+        if self._data.get("min_date") and self._data.get("min_date") >= date.today():
+            _LOGGER.debug("Skipping sensor data update, already have data for today: %s >= %s", self._data.get("min_date"), date.today() )
             return
 
         _LOGGER.debug("Doing sensor data update, last_update was: %s", self._last_update)

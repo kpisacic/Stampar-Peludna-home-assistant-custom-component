@@ -19,7 +19,7 @@ logger:
 sensor:
   - platform: stampar_pelud
     name: Peludna prognoza
-    #station_id: 24
+    #station_id: 8
     #latitude: 45.82123
     #longitude: 16.05123
     #allergens: [3,25,5,6]
