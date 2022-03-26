@@ -3,7 +3,6 @@ Pollen alergy forecast ("Peludna prognoza") for Republic of Croatia, by Public H
 
 The `stampar_pelud` sensor platform provide pollen forecast data for Republic of Croatia. Data is provided by
 Public Health Institute "Andrija Štampar"  - https://stampar.hr/hr/peludna-prognoza .
-Custom pollen forecast card is also included in the package.
 
 The following device types and data are supported:
 
@@ -16,16 +15,12 @@ There are two options; manual or HACS installation:
 
 *Manual installation*
 - Copy `stamper_pelud`  folder in `custom_components` from repository to your Home Assistant configuration `custom_components` folder. Don't copy any other YAML files from repository root not to overwrite your own configuration.
-- Copy `stamper-pelud-card.js` from `www` repository folder to your Home Assistant configuration `www` folder
-- Copy folder `stampar_icons` with all files from `www` repository folder to your Home Assistant configuration `www` folder
 
 *HACS installation*
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 
 - Use HACS custom repository (not default) - (https://github.com/kpisacic/Stampar-Peludna-home-assistant-custom-component)
-- Copy `dhmz-weather-card.js` from `www` repocitory folder to your Home Assistant configuration `www` folder
-- Copy folder `stampar_icons` with all files from `www` repository folder to your Home Assistant configuration `www` folder
 
 ## Location Selection
 
@@ -135,29 +130,3 @@ sensor:
     10   Trave       
     92   Korovi      
 
-## Custom card
-
-To add custom card for Štampar pollen forecast, add following to your lovelace configuration YAML file:
-
-1. Under resources section add custom card definition 
-
-```yaml
-resources:
-  - type: js
-    url: /local/stampar-pelud-card.js
-```
-
-
-2. In views and cards section add following card
-
-```yaml
-    cards:
-      - type: 'custom:stampar-pelud-card'
-        sensor: Peludna prognoza
-        allergens: [3,25,5,6]
-        icons: simple
-```
-
-- `sensor` - mandatory attribute, you should state name of the entity configured in sensor compontent
-- `allergens` - optional attribute, you can specify which plants to display, if left empty display all plants from sensor
-- `icons` - optional which icons to use, options are: simple, stampar, png1, png2, jpg, photo
