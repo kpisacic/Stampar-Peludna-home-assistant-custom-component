@@ -1,0 +1,11 @@
+{
+  "domain": "stampar_pelud",
+  "name": "Peludna Prognoza Hrvatska",
+  "version": "2022.03.1",
+  "documentation": "https://www.home-assistant.io/integrations/stampar_peludna",
+  "requirements": ["lxml>=4.0.0", "beautifulsoup4>=4.0.0", "requests>=2.0.0"],
+  "dependencies": [],
+  "codeowners": [
+    "@kpisacic"
+  ]
+}

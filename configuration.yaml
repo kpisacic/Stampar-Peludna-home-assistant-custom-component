@@ -1,0 +1,25 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+logger:
+  default: info
+  logs:
+    custom_components.stampar_pelud: debug
+
+sensor:
+  - platform: stampar_pelud
+    name: Peludna prognoza
+    #station_id: 24
+    #latitude: 45.82123
+    #longitude: 16.05123
+    #allergens: [3,25,5,6]
