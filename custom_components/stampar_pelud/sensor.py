@@ -343,31 +343,34 @@ class StamparPeludData:
                     date_measurement = measurement.find("div", class_="field-field-datum-mjerenja").find("div", class_="field-item").get_text("", strip=True)
                     _LOGGER.debug("Found measurement of date: %s", date_measurement)
                     d_date_measurement = datetime.strptime(date_measurement, '%d.%m.%Y.').date()
-                    if d_date_measurement < date.today():
-                        _LOGGER.debug("Found measurement date is in past, ignoring it: %s < %s", d_date_measurement , date.today())
-                    else:
-                        level_measurement = ""
-                        s_level_measurement = measurement.find("div", class_="field-field-vrijednost-tekst")
-                        if s_level_measurement:
-                            level_measurement = s_level_measurement.find("div", class_="field-item").get_text("", strip=True)
+
+                    ## logic excluded, let sensor store all fetched data, filtering of only future dates should be done in frontend
+                    # if d_date_measurement < date.today():
+                    #     _LOGGER.debug("Found measurement date is in past, ignoring it: %s < %s", d_date_measurement , date.today())
+                    # else:
+
+                    level_measurement = ""
+                    s_level_measurement = measurement.find("div", class_="field-field-vrijednost-tekst")
+                    if s_level_measurement:
+                        level_measurement = s_level_measurement.find("div", class_="field-item").get_text("", strip=True)
+                    value_measurement = ""
+                    s_value = measurement.find("div", class_="field-field-vrijednost")
+                    if s_value:
+                        value_measurement = s_value.find("div", class_="field-item").get_text("", strip=True)
+
+                    _LOGGER.debug("Original level: %s and value: %s", level_measurement, value_measurement)
+
+                    if level_measurement == "" and value_measurement != "" and not value_measurement.replace(".","").isdigit():
+                        level_measurement = value_measurement
                         value_measurement = ""
-                        s_value = measurement.find("div", class_="field-field-vrijednost")
-                        if s_value:
-                            value_measurement = s_value.find("div", class_="field-item").get_text("", strip=True)
 
-                        _LOGGER.debug("Original level: %s and value: %s", level_measurement, value_measurement)
+                    _LOGGER.debug("Aligned level: %s and value: %s", level_measurement, value_measurement)
 
-                        if level_measurement == "" and value_measurement != "" and not value_measurement.replace(".","").isdigit():
-                            level_measurement = value_measurement
-                            value_measurement = ""
-
-                        _LOGGER.debug("Aligned level: %s and value: %s", level_measurement, value_measurement)
-
-                        d_measurements.append( {
-                            "date": date_measurement,
-                            "level": level_measurement,
-                            "value": value_measurement
-                        } )
+                    d_measurements.append( {
+                        "date": date_measurement,
+                        "level": level_measurement,
+                        "value": value_measurement
+                    } )
                     
                     if not d_first_measurement:
                         d_first_measurement = d_date_measurement
@@ -429,9 +432,10 @@ class StamparPeludData:
             _LOGGER.debug("Skipping sensor data update, last_update was: %s", self._last_update)
             return
 
-        if self._data.get("min_date") and self._data.get("min_date") >= date.today():
-            _LOGGER.debug("Skipping sensor data update, already have data for today: %s >= %s", self._data.get("min_date"), date.today() )
-            return
+        ## logic excluded, seems like data can be updated more then once per day
+        # if self._data.get("min_date") and self._data.get("min_date") >= date.today():
+        #     _LOGGER.debug("Skipping sensor data update, already have data for today: %s >= %s", self._data.get("min_date"), date.today() )
+        #     return
 
         _LOGGER.debug("Doing sensor data update, last_update was: %s", self._last_update)
 
