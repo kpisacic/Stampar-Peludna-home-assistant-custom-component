@@ -82,28 +82,29 @@ sensor:
 ## station_id
 
     2   Beli Manastir 
-    3   Dubrovnik     
-    4   Đakovo        
-    5   Karlovac      
-    6   Koprivnica    
-    7   Kutina        
-    8   Labin         
-    9   Metković      
-    10  Našice        
-    11  Osijek        
-    12  Pazin         
-    13  Popovača      
-    14  Poreč         
-    15  Pula          
-    16  Rijeka        
-    17  Šibenik       
-    18  Sisak         
-    19  Slavonski Brod
-    20  Split         
-    21  Varaždin      
-    22  Virovitica    
-    23  Zadar         
-    24  Zagreb        
+    3   Bjelovar     
+    4   Dubrovnik     
+    5   Đakovo        
+    6   Karlovac      
+    7   Koprivnica    
+    8   Kutina        
+    9   Labin         
+    10   Metković      
+    11  Našice        
+    12  Osijek        
+    13  Pazin         
+    14  Popovača      
+    15  Poreč         
+    16  Pula          
+    17  Rijeka        
+    18  Šibenik       
+    19  Sisak         
+    20  Slavonski Brod
+    21  Split         
+    22  Varaždin      
+    23  Virovitica    
+    24  Zadar         
+    25  Zagreb        
 
 ## plants
 
