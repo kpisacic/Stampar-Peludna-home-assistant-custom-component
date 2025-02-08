@@ -84,10 +84,11 @@ STATIONS = {
     "19": { "name":"Sisak"          , "lat": 45.4851, "long": 16.3731 },
     "20": { "name":"Slavonski Brod" , "lat": 45.1631, "long": 18.0116 },
     "21": { "name":"Split"          , "lat": 43.5147, "long": 16.4435 },
-    "22": { "name":"Varaždin"       , "lat": 46.3057, "long": 16.3366 },
-    "23": { "name":"Virovitica"     , "lat": 45.8316, "long": 17.3855 },
-    "24": { "name":"Zadar"          , "lat": 44.1194, "long": 15.2314 },
-    "25": { "name":"Zagreb"         , "lat": 45.8150, "long": 15.9819 },
+    "22": { "name":"Sveta Nedelja"  , "lat": 45.7983, "long": 15.7716 },
+    "23": { "name":"Varaždin"       , "lat": 46.3057, "long": 16.3366 },
+    "24": { "name":"Virovitica"     , "lat": 45.8316, "long": 17.3855 },
+    "25": { "name":"Zadar"          , "lat": 44.1194, "long": 15.2314 },
+    "26": { "name":"Zagreb"         , "lat": 45.8150, "long": 15.9819 },
 }
 
 LEVELS = {

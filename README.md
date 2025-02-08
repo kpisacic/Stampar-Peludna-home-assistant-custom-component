@@ -101,10 +101,11 @@ sensor:
     19  Sisak         
     20  Slavonski Brod
     21  Split         
-    22  Varaždin      
-    23  Virovitica    
-    24  Zadar         
-    25  Zagreb        
+    22  Sveta Nedelja
+    23  Varaždin      
+    24  Virovitica    
+    25  Zadar         
+    26  Zagreb        
 
 ## plants
 
